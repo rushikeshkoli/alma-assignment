@@ -15,14 +15,14 @@ class Result(APIView):
 
     def post(self, request):
         data = request.data
-        roll_no = data['roll_no']
+        roll_no = int(data['roll_no'])
         name = data['name']
-        physics = data['physics']
-        maths = data['maths']
-        chemistry = data['chemistry']
+        physics = int(data['physics'])
+        maths = int(data['maths'])
+        chemistry = int(data['chemistry'])
         total = maths + physics + chemistry
-        percentage = round(total / 300, 2)
-        student = models.Student.objects.get(roll_no=roll_no)
+        percentage = round((total / 300) * 100, 2)
+        student = models.Student.objects.filter(roll_no=roll_no).exists()
         if student:
             scorecard = models.ScoreCard.objects.get(student=student)
             scorecard.maths = maths
@@ -32,18 +32,19 @@ class Result(APIView):
             scorecard.percentage = percentage
             scorecard.save()
         else:
-            new_student = models.Student.objects.create(roll_no=roll_no, name=name)
-            models.ScoreCard.objects.create(student=new_student, maths=maths, physics=physics, chemistry=chemistry,
-                                            total=total, percentage=percentage)
+            scorecard = models.ScoreCard.objects.create(maths=maths, physics=physics, chemistry=chemistry,
+                                                        total=total, percentage=percentage)
+            models.Student.objects.create(roll_no=roll_no, name=name, scorecard=scorecard)
+        return Response(status=200)
 
 
 class LeaderBoard(APIView):
 
-    def get(self):
-        students = models.Student.objects.get()
+    def get(self, request):
+        students = models.Student.objects.all()
         scoreboard = []
         for student in students:
-            scores = models.ScoreCard.objects.get(student=student)
+            scores = models.ScoreCard.objects.get(id=student.scorecard_id)
             scoreboard.append({'name': student.name, 'roll_no': student.roll_no, 'physics': scores.physics,
                                'chemistry': scores.chemistry, 'maths': scores.maths, 'total': scores.total,
                                'percentage': scores.percentage})
