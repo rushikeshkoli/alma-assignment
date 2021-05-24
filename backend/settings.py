@@ -53,6 +53,7 @@ MIDDLEWARE = [
 
 CORS_ORIGIN_WHITELIST = [
     'http://localhost:3000',
+    'http://demo1.rushikeshkoli.com'
 ]
 
 ROOT_URLCONF = 'backend.urls'
