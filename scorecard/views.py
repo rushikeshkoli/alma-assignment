@@ -32,7 +32,7 @@ class Result(APIView):
             scorecard.percentage = percentage
             scorecard.save()
         else:
-            scorecard = models.ScoreCard.objects.create(maths=maths, physics=physics, chemistry=chemistry,
+            scorecard = models.ScoreCard.objects.select_for_update().create(maths=maths, physics=physics, chemistry=chemistry,
                                                         total=total, percentage=percentage)
             models.Student.objects.create(roll_no=roll_no, name=name, scorecard=scorecard)
         return Response(status=200)
