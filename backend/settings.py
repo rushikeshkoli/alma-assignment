@@ -11,7 +11,7 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 """
 
 from pathlib import Path
-
+import os
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -84,7 +84,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': "mydb",
         'USER': 'admin',
-        'PASSWORD': 'admin#123',
+        'PASSWORD': os.environ['rds_pwd'],
         'HOST': 'alma-mysql.cltegpaqlc5j.ap-south-1.rds.amazonaws.com',
         'ATOMIC_REQUESTS': True
     }
